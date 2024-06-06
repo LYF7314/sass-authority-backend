@@ -1,7 +1,9 @@
 package edu.hitwh.service;
 
+import edu.hitwh.dto.LoginDTO;
 import edu.hitwh.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import edu.hitwh.utils.Result;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IFrameUserService extends IService<User> {
 
+    Result login(LoginDTO loginInfo);
 }
