@@ -1,0 +1,25 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: sass-authority-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.93.124.212:3306/SaaS?useSSL=false
+    username: root
+    password: HITwh352@
+    type: com.alibaba.druid.pool.DruidDataSource
+  jackson:
+    default-property-inclusion: non_null # JSON?????????
+  data:
+    redis:
+      host: 47.93.124.212
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 100ms
+mybatis-plus:
+  type-aliases-package: com.hitwh.entity # ?????
