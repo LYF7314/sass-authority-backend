@@ -20,6 +20,10 @@ import lombok.Setter;
 @TableName("frame_function")
 public class Function implements Serializable {
 
+    public static final Integer STATE_AVAILABLE = 1;
+
+    public static final Integer STATE_UNAVAILABLE = 1;
+
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -31,11 +35,13 @@ public class Function implements Serializable {
 
     private Long parentId;
 
-    private Integer isleaf;
+    @TableId(value = "isleaf")
+    private Integer isLeaf;
 
     private Integer order;
 
     private String url;
 
     private Long serviceId;
+
 }

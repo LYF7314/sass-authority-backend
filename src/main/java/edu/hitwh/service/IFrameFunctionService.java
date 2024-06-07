@@ -2,6 +2,7 @@ package edu.hitwh.service;
 
 import edu.hitwh.entity.Function;
 import com.baomidou.mybatisplus.extension.service.IService;
+import edu.hitwh.utils.Result;
 
 /**
  * <p>
@@ -13,4 +14,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IFrameFunctionService extends IService<Function> {
 
+    Result createFunction(Function function);
+
+    Result getAllFunctions();
+
+    Result updateFunction(Function function);
+
+    Result deleteFunction(Long id);
 }
