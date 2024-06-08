@@ -5,6 +5,7 @@ import edu.hitwh.dto.LoginDTO;
 import edu.hitwh.service.IFrameUserService;
 import edu.hitwh.utils.Result;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,8 @@ public class LoginController {
      * @return 成功信息
      */
     @GetMapping("/logout")
-    public Result logout() {
+    public Result logout(HttpSession session) {
+        session.invalidate();
         return Result.ok();
     }
 
