@@ -1,11 +1,17 @@
 package edu.hitwh.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import edu.hitwh.utils.BooleanToIntegerDeserializer;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -17,6 +23,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 @TableName("frame_function")
 public class Function implements Serializable {
 
@@ -33,15 +41,19 @@ public class Function implements Serializable {
 
     private Integer state;
 
+    @TableField("parentId")
     private Long parentId;
 
-    @TableId(value = "isleaf")
+    @JsonDeserialize(using = BooleanToIntegerDeserializer.class)
+    @TableField("isLeaf")
     private Integer isLeaf;
 
+    @TableField("`order`")
     private Integer order;
 
     private String url;
 
+    @TableField("serviceId")
     private Long serviceId;
 
 }

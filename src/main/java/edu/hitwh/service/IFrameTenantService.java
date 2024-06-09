@@ -2,6 +2,7 @@ package edu.hitwh.service;
 
 import edu.hitwh.entity.Tenant;
 import com.baomidou.mybatisplus.extension.service.IService;
+import edu.hitwh.utils.Result;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IFrameTenantService extends IService<Tenant> {
 
+    Result getAllTenantDTOs();
 }

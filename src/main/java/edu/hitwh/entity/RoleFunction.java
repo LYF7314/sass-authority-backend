@@ -1,6 +1,7 @@
 package edu.hitwh.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -25,9 +26,11 @@ public class RoleFunction implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @TableField("roleId")
     private Long roleId;
 
-    private Long rolefunctionId;
+    @TableField("tenantFunctionId")
+    private Long tenantFunctionId;
 
     private Integer order;
 }

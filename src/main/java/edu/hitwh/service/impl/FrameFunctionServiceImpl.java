@@ -3,17 +3,27 @@ package edu.hitwh.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import edu.hitwh.dto.FunctionNode;
 import edu.hitwh.entity.Function;
+import edu.hitwh.entity.TenantFunction;
+import edu.hitwh.entity.User;
+import edu.hitwh.entity.UserFunction;
 import edu.hitwh.mapper.FrameFunctionMapper;
+import edu.hitwh.mapper.FrameTenantfunctionMapper;
+import edu.hitwh.mapper.FrameUserfunctionMapper;
 import edu.hitwh.service.IFrameFunctionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hitwh.utils.Result;
-import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static edu.hitwh.utils.RedisConstants.LOGIN_INFO_KEY;
 
 /**
  * <p>
@@ -29,6 +39,12 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
     @Resource
     private FrameFunctionMapper frameFunctionMapper;
 
+    @Resource
+    private FrameUserfunctionMapper frameUserfunctionMapper;
+
+    @Resource
+    private FrameTenantfunctionMapper tenantFunctionMapper;
+
     @Override
     public Result createFunction(Function function) {
         function.setState(Function.STATE_AVAILABLE);
@@ -43,6 +59,19 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
             return Result.fail("Not any function nodes");
         }
         return Result.ok(functionNodeTree);
+    }
+
+    public List<FunctionNode> getFunctionTree(Long parentId) {
+        List<Function> functions = frameFunctionMapper.selectByParentId(parentId);
+        List<FunctionNode> functionNodes = functions.stream()
+                .map(FunctionNode::new)
+                .collect(Collectors.toList());
+        functionNodes.forEach(node -> {
+            if (node.getIsLeaf() == 0) {
+                node.setChildren(getFunctionTree(node.getId()));
+            }
+        });
+        return functionNodes;
     }
 
     @Override
@@ -62,23 +91,80 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
 
     @Override
     public Result deleteFunction(Long id) {
-        int res = frameFunctionMapper.deleteById(id);
-        if (res == 0) {
+        // 获取要删除的功能及其子功能的ID列表
+        List<Long> functionIds = new ArrayList<>();
+        collectFunctionIds(id, functionIds);
+
+        // 执行删除操作
+        int deletedCount = frameFunctionMapper.deleteBatchIds(functionIds);
+
+        if (deletedCount == 0) {
             return Result.fail("No function was deleted");
         }
+
         return Result.ok();
     }
 
-    public List<FunctionNode> getFunctionTree(Long parentId) {
+    // 递归收集功能及其子功能的ID
+    private void collectFunctionIds(Long parentId, List<Long> functionIds) {
+        // 获取当前父功能下的所有子功能
         List<Function> functions = frameFunctionMapper.selectByParentId(parentId);
-        List<FunctionNode> functionNodes = functions.stream()
-                .map(FunctionNode::new)
-                .collect(Collectors.toList());
-        functionNodes.forEach(node -> {
-            if (node.getIsLeaf() == 0) {
-                node.setChildren(getFunctionTree(node.getId()));
-            }
-        });
-        return functionNodes;
+
+        // 将当前父功能加入ID列表
+        functionIds.add(parentId);
+
+        // 递归处理子功能
+        for (Function function : functions) {
+            collectFunctionIds(function.getId(), functionIds);
+        }
     }
+
+    @Override
+    public Result getNavigation(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute(LOGIN_INFO_KEY);
+        Long userId = user.getId();
+        Long tenantFunctionId = frameUserfunctionMapper.selectOne(new LambdaQueryWrapper<UserFunction>()
+                .eq(UserFunction::getUserId, userId)).getTenantFunctionId();
+        List<Long> functionIdList = tenantFunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>()
+                        .eq(TenantFunction::getId, tenantFunctionId))
+                .stream()
+                .map(TenantFunction::getFunctionId)
+                .toList();
+        List<FunctionNode> functionNodeList = frameFunctionMapper.selectBatchIds(functionIdList)
+                .stream()
+                .map(FunctionNode::new)
+                .toList();
+        // 生成用户功能树
+        List<FunctionNode> functionTree = getUserFunctionTree(functionNodeList);
+        // 返回功能树
+        return Result.ok(functionTree);
+    }
+
+    public List<FunctionNode> getUserFunctionTree(List<FunctionNode> functionNodeList) {
+        // 创建一个Map以便快速查找父节点
+        Map<Long, FunctionNode> nodeMap = functionNodeList.stream()
+                .collect(Collectors.toMap(FunctionNode::getId, node -> node));
+        // 根节点列表
+        List<FunctionNode> rootNodes = new ArrayList<>();
+
+        // 构建树结构
+        for (FunctionNode node : functionNodeList) {
+            if (node.getParentId() == 0 || !nodeMap.containsKey(node.getParentId())) {
+                // 如果节点没有父节点，或者父节点不在nodeMap中，则认为是根节点
+                rootNodes.add(node);
+            } else {
+                // 否则，将其添加到父节点的children列表中
+                FunctionNode parentNode = nodeMap.get(node.getParentId());
+                parentNode.getChildren().add(node);
+            }
+        }
+        // 根据order字段对根节点及其子节点进行排序
+        rootNodes.sort(Comparator.comparing(FunctionNode::getOrder));
+        for (FunctionNode node : functionNodeList) {
+            node.getChildren().sort(Comparator.comparing(FunctionNode::getOrder));
+        }
+        return rootNodes;
+    }
+
 }

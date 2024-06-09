@@ -1,6 +1,7 @@
 package edu.hitwh.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -36,6 +37,7 @@ public class Component implements Serializable {
 
     private LocalDate date;
 
+    @TableField("packageName")
     private String packageName;
 
     private String uiUrl;

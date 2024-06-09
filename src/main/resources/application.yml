@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  session:
+    timeout: 1800 # 30 minutes
   application:
     name: sass-authority-backend
   datasource:
@@ -21,3 +23,6 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: 100ms
+mybatis-plus:
+  type-aliases-package: edu.hitwh.entity # 别名扫描包
+#  mapper-locations: edu.hitwh.mapper

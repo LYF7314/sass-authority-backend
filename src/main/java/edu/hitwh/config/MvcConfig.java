@@ -1,25 +1,23 @@
 package edu.hitwh.config;
-
-import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Resource;
+
 @Configuration
+@ComponentScan(basePackages = "edu.hitwh.entity")
 public class MvcConfig implements WebMvcConfigurer {
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisSessionInterceptor redisSessionInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 登录拦截器
-        registry.addInterceptor(new LoginInterceptor())
-                .excludePathPatterns(
-                        "/api"
-                ).order(1);
-        // token刷新的拦截器
-//        registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate)).addPathPatterns("/**").order(0);
+        registry.addInterceptor(redisSessionInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/login");  // 登录接口不拦截
     }
 }

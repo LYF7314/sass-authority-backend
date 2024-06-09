@@ -1,6 +1,7 @@
 package edu.hitwh.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class Service implements Serializable {
 
     private String name;
 
+    @TableField("componentId")
     private Long componentId;
 
     private String developer;

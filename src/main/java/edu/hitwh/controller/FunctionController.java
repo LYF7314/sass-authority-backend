@@ -3,8 +3,9 @@ package edu.hitwh.controller;
 import edu.hitwh.entity.Function;
 import edu.hitwh.service.IFrameFunctionService;
 import edu.hitwh.utils.Result;
-import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/function")

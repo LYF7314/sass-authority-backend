@@ -24,4 +24,7 @@ public class Result {
     static public Result fail(String msg){
         return new Result(0,null,msg);
     }
+    static public Result unLogin(String msg){
+        return new Result(2,null,msg);
+    }
 }

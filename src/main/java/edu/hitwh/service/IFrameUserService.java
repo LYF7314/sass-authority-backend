@@ -4,6 +4,7 @@ import edu.hitwh.dto.LoginDTO;
 import edu.hitwh.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hitwh.utils.Result;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -15,5 +16,10 @@ import edu.hitwh.utils.Result;
  */
 public interface IFrameUserService extends IService<User> {
 
-    Result login(LoginDTO loginInfo);
+    Result login(LoginDTO loginInfo, HttpServletRequest request);
+
+    Result logout(HttpServletRequest request);
+
+    Result getUserInfo(HttpServletRequest request);
+
 }

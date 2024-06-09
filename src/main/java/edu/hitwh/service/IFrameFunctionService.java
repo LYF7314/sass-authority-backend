@@ -4,6 +4,8 @@ import edu.hitwh.entity.Function;
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hitwh.utils.Result;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  *  服务类
@@ -21,4 +23,6 @@ public interface IFrameFunctionService extends IService<Function> {
     Result updateFunction(Function function);
 
     Result deleteFunction(Long id);
+
+    Result getNavigation(HttpServletRequest request);
 }
