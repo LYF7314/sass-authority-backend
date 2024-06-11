@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/function")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class FunctionController {
     @Resource
     private IFrameFunctionService frameFunctionService;

@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tenant")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class TenantController {
     @Autowired
     public TenantController(IFrameTenantService frameTenantService){
@@ -36,7 +37,7 @@ public class TenantController {
         tenant.getState() == null || tenant.getType() == null){
             return Result.fail("创建失败，请完善信息");
         }
-        return frameTenantService.save(tenant)?Result.fail("添加租户失败"):Result.ok();
+        return frameTenantService.save(tenant)?Result.ok():Result.fail("添加租户失败,租户名被占用");
     }
 
     /**
@@ -103,7 +104,11 @@ public class TenantController {
         if(tenant.getRoleName() == null || tenant.getRoleName().isBlank() || tenant.getUserName() == null || tenant.getUserName().isBlank() || tenant.getAccount() == null || tenant.getAccount().isBlank()){
             return Result.fail("请填写完整信息");
         }
-        return frameTenantService.initialize(tenant)?Result.ok():Result.fail("初始化失败");
+        try {
+            return frameTenantService.initialize(tenant) ? Result.ok() : Result.fail("初始化失败");
+        }catch (Exception e){
+            return Result.fail("初始化失败");
+        }
     }
 
     /**

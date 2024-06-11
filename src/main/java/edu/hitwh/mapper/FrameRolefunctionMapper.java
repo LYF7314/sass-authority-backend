@@ -2,6 +2,7 @@ package edu.hitwh.mapper;
 
 import edu.hitwh.entity.RoleFunction;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -14,5 +15,4 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface FrameRolefunctionMapper extends BaseMapper<RoleFunction> {
-
 }

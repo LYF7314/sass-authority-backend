@@ -5,10 +5,7 @@ import edu.hitwh.service.IFrameFunctionService;
 import edu.hitwh.service.IFrameTenantService;
 import edu.hitwh.service.IFrameUserService;
 import edu.hitwh.utils.Result;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +19,7 @@ import static edu.hitwh.utils.RedisConstants.LOGIN_INFO_KEY;
  * @Date 10:54 2024/6/8
  **/
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class LoginController {
 
     @Resource

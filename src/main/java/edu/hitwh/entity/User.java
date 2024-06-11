@@ -32,7 +32,7 @@ public class User implements Serializable {
 
     @TableField("userName")
     private String userName;
-
+    @TableField("tenantId")
     private Long tenantId;
 
     private String email;

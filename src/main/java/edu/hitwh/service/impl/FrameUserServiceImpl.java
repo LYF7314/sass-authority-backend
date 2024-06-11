@@ -13,6 +13,8 @@ import edu.hitwh.mapper.FrameUserroleMapper;
 import edu.hitwh.service.IFrameUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hitwh.utils.Result;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,6 +34,7 @@ import static edu.hitwh.utils.RedisConstants.LOGIN_INFO_KEY;
  * @since 2024-06-06
  */
 @Service
+@Slf4j
 public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> implements IFrameUserService {
 
     @Resource
@@ -50,9 +53,10 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
     public Result login(LoginDTO loginInfo, HttpServletRequest request) {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getTenantId, loginInfo.getTenantId())
-                .eq(User::getUserName, loginInfo.getUsername())
+                .eq(User::getAccount, loginInfo.getUserName())
                 .eq(User::getPassword, loginInfo.getPassword()));
         if (user == null) {
+            log.error(loginInfo.toString());
             return Result.fail("User not found");
         }
 
