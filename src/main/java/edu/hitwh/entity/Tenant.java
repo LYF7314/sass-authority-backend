@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,11 +24,12 @@ import lombok.Setter;
 public class Tenant implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    public static final List<Integer> stateList = List.of(0, 1);
+    public static final List<Integer> typeList = List.of(0, 1);
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String code;
+    private Integer code;
 
     private String name;
 

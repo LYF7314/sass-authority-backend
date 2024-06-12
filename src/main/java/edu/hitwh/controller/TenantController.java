@@ -1,17 +1,19 @@
 package edu.hitwh.controller;
 
+import edu.hitwh.dto.SearchTenantDTO;
 import edu.hitwh.dto.TenantAdminDTO;
 import edu.hitwh.dto.TenantDTO;
 import edu.hitwh.entity.Tenant;
 import edu.hitwh.service.IFrameTenantService;
 import edu.hitwh.utils.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/tenant")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -32,12 +34,12 @@ public class TenantController {
     @PostMapping("/add")
     public Result addTenant(@RequestBody Tenant tenant) {
         tenant.setId(null);
-        if(tenant.getCode() == null ||tenant.getCode().isBlank() ||
+        if(tenant.getCode() == null  ||
         tenant.getName() == null || tenant.getName().isBlank() ||
         tenant.getState() == null || tenant.getType() == null){
             return Result.fail("创建失败，请完善信息");
         }
-        return frameTenantService.save(tenant)?Result.ok():Result.fail("添加租户失败,租户名被占用");
+        return frameTenantService.addTenant(tenant)?Result.ok():Result.fail("添加租户失败，租户名或编号重复");
     }
 
     /**
@@ -56,9 +58,9 @@ public class TenantController {
      * @return 符合搜索条件的租户
      */
     @GetMapping("/search")
-    public Result searchTenant(@RequestParam String name,@RequestParam Integer state) {
-        if(name == null || name.isBlank())return Result.fail("请输入租户名");
-        List<Tenant> tenants = frameTenantService.searchTenant(name,state);
+    public Result searchTenant(SearchTenantDTO search){
+        if(search.getName() == null || search.getName().isBlank())return Result.fail("请输入租户名");
+        List<Tenant> tenants = frameTenantService.searchTenant(search.getName(),search.getState());
         return tenants == null?Result.fail("无法搜索到符合条件的租户"):Result.ok(tenants);
     }
 
@@ -72,13 +74,25 @@ public class TenantController {
         if(tenant.getId() == null){
             return Result.fail("请选择租户");
         }
-        return frameTenantService.updateById(tenant)?Result.ok():Result.fail("修改失败");
+        if(tenant.getName() != null && tenant.getName().isBlank() ||
+                tenant.getState() != null && !Tenant.stateList.contains(tenant.getState())||
+                tenant.getType() != null && !Tenant.typeList.contains(tenant.getType())){
+            return Result.fail("请按规范填写信息");
+        }
+        log.info("update tenant: {}",tenant);
+        log.info("tenant state"+tenant.getState()+" "+Tenant.stateList.contains(tenant.getState()));
+        log.info("tenant type"+tenant.getState()+" "+Tenant.typeList.contains(tenant.getState()));
+        return frameTenantService.updateTenant(tenant)?Result.ok():Result.fail("修改失败");
     }
 
     @GetMapping("/business")
-    public Result tenantBusiness(@RequestParam Integer tenantId){
+    public Result tenantBusiness(Integer tenantId){
         if(tenantId == null)return Result.fail("请选择租户");
-        return Result.ok(true);
+        if(frameTenantService.existsTenant(tenantId)){
+            return Result.ok(true);
+        }else {
+            return Result.fail("租户不存在");
+        }
     }
 
     /**
@@ -88,7 +102,7 @@ public class TenantController {
      * @return 成功信息
      */
     @DeleteMapping("/delete")
-    public Result deleteTenant(@PathVariable Integer tenantId){
+    public Result deleteTenant(Integer tenantId){
         if (tenantId == null)return Result.fail("请选择租户");
         return frameTenantService.removeById(tenantId)?Result.ok():Result.fail("删除失败");
     }

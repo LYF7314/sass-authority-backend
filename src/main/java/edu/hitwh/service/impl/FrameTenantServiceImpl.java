@@ -59,6 +59,8 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         return Result.ok(tenantDTOList);
     }
 
+
+
     @Override
     public List<Tenant> searchTenant(String name, Integer state) {
         LambdaQueryWrapper<Tenant> wrapper = new LambdaQueryWrapper<>();
@@ -114,5 +116,31 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         tenant.setUserName(tenantAdminDTO.getUserName());
         if(frameTenantMapper.updateById(tenant) != 1)throw new RuntimeException("Failed to update tenant");
         return true;
+    }
+
+    public boolean isConflict(Tenant tenant){
+        if(frameTenantMapper.exists(new LambdaQueryWrapper<Tenant>()
+                .eq(Tenant::getName,tenant.getName())
+                .or()
+                .eq(Tenant::getCode,tenant.getCode()))){
+            return true;
+        }else return false;
+    }
+
+    @Override
+    public boolean addTenant(Tenant tenant) {
+        if(isConflict(tenant))return false;
+        return save(tenant);
+    }
+
+    @Override
+    public boolean updateTenant(Tenant tenant) {
+        if(isConflict(tenant))return false;
+        return false;
+    }
+
+    @Override
+    public boolean existsTenant(Integer tenantId) {
+        return frameTenantMapper.exists(new LambdaQueryWrapper<Tenant>().eq(Tenant::getId,tenantId));
     }
 }

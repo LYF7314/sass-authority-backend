@@ -9,22 +9,24 @@ public class Result {
     private int code;
     private String msg;
     private Object data;
-
+    public static final int OK = 0;
+    public static final int FAIL = 1;
+    public static final int UNLOGIN = 2;
     public Result(int code, Object data, String msg) {
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
     static public Result ok(){
-        return new Result(1,null,"");
+        return new Result(OK,null,"");
     }
     static public Result ok(Object data){
-        return new Result(1,data,"");
+        return new Result(OK,data,"");
     }
     static public Result fail(String msg){
-        return new Result(0,null,msg);
+        return new Result(FAIL,null,msg);
     }
     static public Result unLogin(String msg){
-        return new Result(2,null,msg);
+        return new Result(UNLOGIN,null,msg);
     }
 }

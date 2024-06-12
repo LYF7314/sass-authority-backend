@@ -23,4 +23,10 @@ public interface IFrameTenantService extends IService<Tenant> {
     List<Tenant> searchTenant(String name, Integer state);
 
     boolean initialize(TenantAdminDTO tenant);
+
+    boolean addTenant(Tenant tenant);
+
+    boolean updateTenant(Tenant tenant);
+
+    boolean existsTenant(Integer tenantId);
 }
