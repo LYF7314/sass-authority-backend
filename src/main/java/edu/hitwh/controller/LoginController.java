@@ -1,10 +1,13 @@
 package edu.hitwh.controller;
 
 import edu.hitwh.dto.LoginDTO;
+import edu.hitwh.entity.User;
 import edu.hitwh.service.IFrameFunctionService;
 import edu.hitwh.service.IFrameTenantService;
 import edu.hitwh.service.IFrameUserService;
+import edu.hitwh.utils.RedisConstants;
 import edu.hitwh.utils.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,6 +21,7 @@ import static edu.hitwh.utils.RedisConstants.LOGIN_INFO_KEY;
  * @Description Login and related APIs
  * @Date 10:54 2024/6/8
  **/
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class LoginController {
@@ -32,8 +36,17 @@ public class LoginController {
     private IFrameFunctionService frameFunctionService;
 
     @PostMapping("/login")
-    public Result login(@RequestBody LoginDTO loginInfo, HttpServletRequest request) {
-        return frameUserService.login(loginInfo, request);
+    public Result login(@RequestBody LoginDTO loginInfo,HttpServletRequest request) {
+        User user = request.getSession(false)!=null?(User)(request.getSession(false).getAttribute(RedisConstants.LOGIN_INFO_KEY)):null;
+        if(user != null) log.info("login session: {}",user.getId());
+        request.getSession().invalidate();
+        user = frameUserService.login(loginInfo);
+        if(user != null){
+            request.getSession(true).setAttribute(LOGIN_INFO_KEY, user);
+            return Result.ok("登录成功");
+        }else{
+            return Result.fail("登录失败");
+        }
     }
 
     @GetMapping("/logout")

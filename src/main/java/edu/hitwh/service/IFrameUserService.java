@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface IFrameUserService extends IService<User> {
 
-    Result login(LoginDTO loginInfo, HttpServletRequest request);
+    User login(LoginDTO loginInfo);
 
     Result logout(HttpServletRequest request);
 

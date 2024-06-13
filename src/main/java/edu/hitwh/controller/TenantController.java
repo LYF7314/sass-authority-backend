@@ -3,12 +3,15 @@ package edu.hitwh.controller;
 import edu.hitwh.dto.*;
 import edu.hitwh.entity.Function;
 import edu.hitwh.entity.Tenant;
+import edu.hitwh.entity.User;
 import edu.hitwh.service.IFrameTenantService;
+import edu.hitwh.utils.RedisConstants;
 import edu.hitwh.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +49,9 @@ public class TenantController {
      * @return 租户详细列表
      */
     @GetMapping("/all")
-    public Result getAllTenants() {
+    public Result getAllTenants(HttpSession session) {
+        User user = (User)(session.getAttribute(RedisConstants.LOGIN_INFO_KEY));
+        log.info("get all tenants session: {}",user.getId());
         List<Tenant> tenants = frameTenantService.list();
         return tenants == null?Result.fail("获取租户失败"):Result.ok(tenants);
     }

@@ -1,12 +1,16 @@
 package edu.hitwh.controller;
 
+import edu.hitwh.config.RedisSessionInterceptor;
 import edu.hitwh.entity.Function;
 import edu.hitwh.service.IFrameFunctionService;
+import edu.hitwh.utils.RedisConstants;
 import edu.hitwh.utils.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-
+import javax.servlet.http.HttpSession;
+@Slf4j
 @RestController
 @RequestMapping("/function")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -29,7 +33,8 @@ public class FunctionController {
      * @return 功能树
      */
     @GetMapping("/all")
-    public Result getAllFunctions() {
+    public Result getAllFunctions(HttpSession session) {
+        log.info("get all functions session: {}",session.getAttribute(RedisConstants.LOGIN_INFO_KEY));
         return frameFunctionService.getAllFunctions();
     }
 
