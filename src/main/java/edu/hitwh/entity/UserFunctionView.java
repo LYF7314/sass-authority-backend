@@ -1,9 +1,7 @@
 package edu.hitwh.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import edu.hitwh.utils.BooleanToIntegerDeserializer;
-import edu.hitwh.utils.IntegerToBooleanDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 /**
@@ -25,23 +23,28 @@ public class UserFunctionView {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField("userId")
     Long userId;
 
+    @TableField("functionId")
     Long functionId;
 
     String name;
 
     private Integer state;
 
+    @TableField("`order`")
     Integer order;
 
+    @TableField("parentId")
     private Long parentId;
 
-    @JsonDeserialize(using = IntegerToBooleanDeserializer.class)
+    @TableField("isLeaf")
     private Boolean isLeaf;
 
     private String url;
 
+    @TableField("serviceId")
     private Long serviceId;
 
 }

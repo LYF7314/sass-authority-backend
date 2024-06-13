@@ -27,12 +27,12 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Ser
 
     @Override
     public Result getServiceRefers() {
-        List<ServiceReferDTO> ServiceReferDTOList = serviceMapper.selectList(new LambdaQueryWrapper<Service>())
+        List<ServiceReferDTO> ServiceReferDTOList = serviceMapper.selectList(new LambdaQueryWrapper<>())
                 .stream()
                 .map(ServiceReferDTO::new)
                 .toList();
         if (ServiceReferDTOList.isEmpty()) {
-            return Result.ok("Service not found");
+            return Result.okWithMessage("Service not found");
         }
         return Result.ok(ServiceReferDTOList);
     }

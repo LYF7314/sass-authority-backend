@@ -4,13 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import edu.hitwh.dto.FunctionNode;
 import edu.hitwh.entity.*;
 import edu.hitwh.mapper.FrameFunctionMapper;
-import edu.hitwh.mapper.FrameTenantfunctionMapper;
 import edu.hitwh.mapper.FrameUserFunctionViewMapper;
-import edu.hitwh.mapper.FrameUserfunctionMapper;
 import edu.hitwh.service.IFrameFunctionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hitwh.utils.Result;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,16 +31,11 @@ import static edu.hitwh.utils.RedisConstants.LOGIN_INFO_KEY;
  * @since 2024-06-06
  */
 @Service
+@Transactional
 public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, Function> implements IFrameFunctionService {
 
     @Resource
     private FrameFunctionMapper frameFunctionMapper;
-
-    @Resource
-    private FrameUserfunctionMapper frameUserfunctionMapper;
-
-    @Resource
-    private FrameTenantfunctionMapper tenantFunctionMapper;
 
     @Resource
     private FrameUserFunctionViewMapper userFunctionViewMapper;
@@ -50,7 +44,7 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
     public Result createFunction(Function function) {
         function.setState(Function.STATE_AVAILABLE);
         frameFunctionMapper.insert(function);
-        return Result.ok();
+        return Result.okWithMessage("Inserted function successfully");
     }
 
     @Override
@@ -87,7 +81,7 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
         if (res == 0) {
             return Result.fail("No function was updated");
         }
-        return Result.ok();
+        return Result.okWithMessage("Function updated successfully");
     }
 
     @Override
@@ -135,7 +129,7 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
         if (userFunctionTree == null || userFunctionTree.isEmpty()) {
             return Result.ok("No Function Found");
         }
-        return Result.ok("Success");
+        return Result.ok(userFunctionTree);
     }
 
     public List<FunctionNode> getUserFunctionTree(List<FunctionNode> functionNodeList) {
@@ -146,6 +140,9 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
         List<FunctionNode> rootNodes = new ArrayList<>();
         // 构建树结构
         for (FunctionNode node : functionNodeList) {
+            if (node.getParentId() == null) {
+                continue;
+            }
             if (node.getParentId() == 0 || !nodeMap.containsKey(node.getParentId())) {
                 // 如果节点没有父节点，或者父节点不在nodeMap中，则认为是根节点
                 rootNodes.add(node);
