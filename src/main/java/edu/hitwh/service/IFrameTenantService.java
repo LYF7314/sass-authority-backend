@@ -1,6 +1,8 @@
 package edu.hitwh.service;
 
+import edu.hitwh.dto.FunctionNode;
 import edu.hitwh.dto.TenantAdminDTO;
+import edu.hitwh.dto.TenantFunctionDTO;
 import edu.hitwh.entity.Tenant;
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.hitwh.utils.Result;
@@ -28,4 +30,8 @@ public interface IFrameTenantService extends IService<Tenant> {
     boolean updateTenant(Tenant tenant);
 
     boolean existsTenant(Integer tenantId);
+
+    List<FunctionNode> getTenantFunctions(Long tenantId);
+
+    boolean distributeFunction(TenantFunctionDTO tenantFunctionDTO);
 }

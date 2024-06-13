@@ -1,8 +1,7 @@
 package edu.hitwh.controller;
 
-import edu.hitwh.dto.SearchTenantDTO;
-import edu.hitwh.dto.TenantAdminDTO;
-import edu.hitwh.dto.TenantDTO;
+import edu.hitwh.dto.*;
+import edu.hitwh.entity.Function;
 import edu.hitwh.entity.Tenant;
 import edu.hitwh.service.IFrameTenantService;
 import edu.hitwh.utils.Result;
@@ -118,20 +117,34 @@ public class TenantController {
         if(tenant.getRoleName() == null || tenant.getRoleName().isBlank() || tenant.getUserName() == null || tenant.getUserName().isBlank() || tenant.getAccount() == null || tenant.getAccount().isBlank()){
             return Result.fail("请填写完整信息");
         }
-        try {
+        try{
             return frameTenantService.initialize(tenant) ? Result.ok() : Result.fail("初始化失败");
-        }catch (Exception e){
-            return Result.fail("初始化失败");
+        }catch (RuntimeException e){
+            return Result.fail(e.getMessage());
         }
+
     }
 
     /**
-     * 分配功能给租户
+     * 获取租户的功能
+     * @param tenantId
+     * @return
+     */
+    @GetMapping("/functions")
+    public Result getTenantFunctions(Long tenantId){
+        if(tenantId == null)return Result.fail("请选择租户");
+        List<FunctionNode> functions = frameTenantService.getTenantFunctions(tenantId);
+        return functions == null?Result.fail("查找该租户功能失败"):Result.ok(functions);
+    }
+
+    /**
+     * 修改租户功能
      * 存疑
      * @return
      */
     @PostMapping("/function/distribute")
-    public Result distributeFunction(){
-        return Result.fail("Not implement");
+    public Result distributeFunction(@RequestBody TenantFunctionDTO tenantFunctionDTO){
+        if(tenantFunctionDTO.getTenantId()==null)return Result.fail("请选择租户");
+        return frameTenantService.distributeFunction(tenantFunctionDTO)?Result.ok():Result.fail("分配失败");
     }
 }
