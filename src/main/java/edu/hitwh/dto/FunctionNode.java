@@ -1,6 +1,7 @@
 package edu.hitwh.dto;
 
 import edu.hitwh.entity.Function;
+import edu.hitwh.entity.UserFunctionView;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -33,6 +34,17 @@ public class FunctionNode {
         this.order = function.getOrder();
         this.url = function.getUrl();
         this.serviceId = function.getServiceId();
+        this.children = new ArrayList<FunctionNode>();
+    }
+
+    public FunctionNode(UserFunctionView userFunctionView) {
+        this.id = userFunctionView.getFunctionId();
+        this.name = userFunctionView.getName();
+        this.parentId = userFunctionView.getParentId();
+        this.isLeaf = userFunctionView.getIsLeaf();
+        this.order = userFunctionView.getOrder();
+        this.url = userFunctionView.getUrl();
+        this.serviceId = userFunctionView.getServiceId();
         this.children = new ArrayList<FunctionNode>();
     }
 }

@@ -59,8 +59,6 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         return Result.ok(tenantDTOList);
     }
 
-
-
     @Override
     public List<Tenant> searchTenant(String name, Integer state) {
         LambdaQueryWrapper<Tenant> wrapper = new LambdaQueryWrapper<>();

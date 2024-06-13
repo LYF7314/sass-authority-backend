@@ -2,12 +2,10 @@ package edu.hitwh.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import edu.hitwh.dto.FunctionNode;
-import edu.hitwh.entity.Function;
-import edu.hitwh.entity.TenantFunction;
-import edu.hitwh.entity.User;
-import edu.hitwh.entity.UserFunction;
+import edu.hitwh.entity.*;
 import edu.hitwh.mapper.FrameFunctionMapper;
 import edu.hitwh.mapper.FrameTenantfunctionMapper;
+import edu.hitwh.mapper.FrameUserFunctionViewMapper;
 import edu.hitwh.mapper.FrameUserfunctionMapper;
 import edu.hitwh.service.IFrameFunctionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -44,6 +42,9 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
 
     @Resource
     private FrameTenantfunctionMapper tenantFunctionMapper;
+
+    @Resource
+    private FrameUserFunctionViewMapper userFunctionViewMapper;
 
     @Override
     public Result createFunction(Function function) {
@@ -124,25 +125,17 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(LOGIN_INFO_KEY);
         Long userId = user.getId();
-        UserFunction userFunction = frameUserfunctionMapper.selectOne(new LambdaQueryWrapper<UserFunction>()
-                .eq(UserFunction::getUserId, userId));
-        if (userFunction == null) {
-            return Result.fail("User function Not found");
-        }
-        Long tenantFunctionId = userFunction.getTenantFunctionId();
-        List<Long> functionIdList = tenantFunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>()
-                        .eq(TenantFunction::getId, tenantFunctionId))
-                .stream()
-                .map(TenantFunction::getFunctionId)
-                .toList();
-        List<FunctionNode> functionNodeList = frameFunctionMapper.selectBatchIds(functionIdList)
+        List<FunctionNode> functionNodeList = userFunctionViewMapper.selectList(new LambdaQueryWrapper<UserFunctionView>()
+                        .eq(UserFunctionView::getUserId, userId))
                 .stream()
                 .map(FunctionNode::new)
                 .toList();
-        // 生成用户功能树
-        List<FunctionNode> functionTree = getUserFunctionTree(functionNodeList);
+        List<FunctionNode> userFunctionTree = getUserFunctionTree(functionNodeList);
         // 返回功能树
-        return Result.ok(functionTree);
+        if (userFunctionTree == null || userFunctionTree.isEmpty()) {
+            return Result.ok("No Function Found");
+        }
+        return Result.ok("Success");
     }
 
     public List<FunctionNode> getUserFunctionTree(List<FunctionNode> functionNodeList) {
@@ -151,7 +144,6 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
                 .collect(Collectors.toMap(FunctionNode::getId, node -> node));
         // 根节点列表
         List<FunctionNode> rootNodes = new ArrayList<>();
-
         // 构建树结构
         for (FunctionNode node : functionNodeList) {
             if (node.getParentId() == 0 || !nodeMap.containsKey(node.getParentId())) {
