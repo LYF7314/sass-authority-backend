@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import edu.hitwh.utils.IntegerToBooleanDeserializer;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +31,7 @@ public class Function implements Serializable {
 
     public static final Integer STATE_UNAVAILABLE = 1;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -44,7 +44,6 @@ public class Function implements Serializable {
     @TableField("parentId")
     private Long parentId;
 
-    @JsonDeserialize(using = IntegerToBooleanDeserializer.class)
     @TableField("isLeaf")
     private Boolean isLeaf;
 

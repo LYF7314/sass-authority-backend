@@ -18,10 +18,13 @@ public class Result {
         this.data = data;
     }
     static public Result ok(){
-        return new Result(OK,null,"");
+        return new Result(OK,null,"success");
     }
     static public Result ok(Object data){
-        return new Result(OK,data,"");
+        return new Result(OK,data,"success");
+    }
+    static public Result okWithMessage(String message) {
+        return new Result(OK, null, message);
     }
     static public Result fail(String msg){
         return new Result(FAIL,null,msg);

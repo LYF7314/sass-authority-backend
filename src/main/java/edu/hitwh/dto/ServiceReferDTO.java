@@ -15,7 +15,13 @@ public class ServiceReferDTO {
 
     public ServiceReferDTO(Service service) {
         this.id = service.getId();
-        this.name = service.getName();
-        this.url = service.getUrl();
+        this.name = "";
+        if (service.getName() != null) {
+            this.name = service.getName();
+        }
+        this.url = "";
+        if (service.getUrl() != null) {
+            this.url = service.getUrl();
+        }
     }
 }

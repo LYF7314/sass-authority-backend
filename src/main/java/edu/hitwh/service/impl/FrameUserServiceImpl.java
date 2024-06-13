@@ -14,12 +14,12 @@ import edu.hitwh.service.IFrameUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.hitwh.utils.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 import static edu.hitwh.utils.RedisConstants.LOGIN_INFO_KEY;
@@ -56,7 +56,7 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
                 .eq(User::getUserName, loginInfo.getUserName())
                 .eq(User::getPassword, loginInfo.getPassword()));
         if (user == null) {
-            log.error("loginInfo：" + loginInfo.toString());
+            log.error("loginInfo：" + loginInfo);
             return Result.fail("User not found");
         }
 
@@ -79,7 +79,11 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
 
     @Override
     public Result getUserInfo(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return Result.unLogin("No active session found");
+        }
+        List<String> userRoleNameList = new ArrayList<>();
         UserInfoDTO userInfoDTO = new UserInfoDTO();
         User user = (User)session.getAttribute(LOGIN_INFO_KEY);
         Long userId = user.getId();
@@ -90,11 +94,13 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
                 .stream()
                 .map(UserRole::getRoleId)
                 .toList();
-        // 根据角色id的列表进一步得到角色名列表
-        List<String> userRoleNameList = frameRoleMapper.selectBatchIds(userRoleIdList)
-                .stream()
-                .map(Role::getName)
-                .toList();
+        if (!userRoleIdList.isEmpty()){
+            // 根据角色id的列表进一步得到角色名列表
+            userRoleNameList = frameRoleMapper.selectBatchIds(userRoleIdList)
+                    .stream()
+                    .map(Role::getName)
+                    .toList();
+        }
         // 根据用户的所属租户id得租户name
         String tenantName = tenantMapper.selectById(tenantId).getName();
         userInfoDTO.setUserName(user.getUserName());
