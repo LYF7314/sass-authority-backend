@@ -16,7 +16,7 @@ public class FunctionNode {
 
     private Long parentId;
 
-    private Integer isLeaf;
+    private Boolean isLeaf;
 
     private Integer order;
 

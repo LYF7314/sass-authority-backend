@@ -3,6 +3,7 @@ package edu.hitwh.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import edu.hitwh.utils.BooleanToIntegerDeserializer;
+import edu.hitwh.utils.IntegerToBooleanDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 /**
@@ -36,8 +37,8 @@ public class UserFunctionView {
 
     private Long parentId;
 
-    @JsonDeserialize(using = BooleanToIntegerDeserializer.class)
-    private Integer isLeaf;
+    @JsonDeserialize(using = IntegerToBooleanDeserializer.class)
+    private Boolean isLeaf;
 
     private String url;
 

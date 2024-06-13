@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import edu.hitwh.utils.BooleanToIntegerDeserializer;
+import edu.hitwh.utils.IntegerToBooleanDeserializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,9 +44,9 @@ public class Function implements Serializable {
     @TableField("parentId")
     private Long parentId;
 
-    @JsonDeserialize(using = BooleanToIntegerDeserializer.class)
+    @JsonDeserialize(using = IntegerToBooleanDeserializer.class)
     @TableField("isLeaf")
-    private Integer isLeaf;
+    private Boolean isLeaf;
 
     @TableField("`order`")
     private Integer order;

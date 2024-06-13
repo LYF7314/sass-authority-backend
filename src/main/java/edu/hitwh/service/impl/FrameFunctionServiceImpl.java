@@ -68,7 +68,7 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
                 .map(FunctionNode::new)
                 .collect(Collectors.toList());
         functionNodes.forEach(node -> {
-            if (node.getIsLeaf() == 0) {
+            if (!node.getIsLeaf()) {
                 node.setChildren(getFunctionTree(node.getId()));
             }
         });
