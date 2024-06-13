@@ -53,10 +53,10 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
     public Result login(LoginDTO loginInfo, HttpServletRequest request) {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getTenantId, loginInfo.getTenantId())
-                .eq(User::getAccount, loginInfo.getUserName())
+                .eq(User::getUserName, loginInfo.getUserName())
                 .eq(User::getPassword, loginInfo.getPassword()));
         if (user == null) {
-            log.error(loginInfo.toString());
+            log.error("loginInfo：" + loginInfo.toString());
             return Result.fail("User not found");
         }
 

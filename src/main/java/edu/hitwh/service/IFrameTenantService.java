@@ -19,7 +19,6 @@ public interface IFrameTenantService extends IService<Tenant> {
 
     Result getAllTenantDTOs();
 
-
     List<Tenant> searchTenant(String name, Integer state);
 
     boolean initialize(TenantAdminDTO tenant);

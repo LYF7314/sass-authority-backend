@@ -124,8 +124,12 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(LOGIN_INFO_KEY);
         Long userId = user.getId();
-        Long tenantFunctionId = frameUserfunctionMapper.selectOne(new LambdaQueryWrapper<UserFunction>()
-                .eq(UserFunction::getUserId, userId)).getTenantFunctionId();
+        UserFunction userFunction = frameUserfunctionMapper.selectOne(new LambdaQueryWrapper<UserFunction>()
+                .eq(UserFunction::getUserId, userId));
+        if (userFunction == null) {
+            return Result.fail("User function Not found");
+        }
+        Long tenantFunctionId = userFunction.getTenantFunctionId();
         List<Long> functionIdList = tenantFunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>()
                         .eq(TenantFunction::getId, tenantFunctionId))
                 .stream()

@@ -36,8 +36,8 @@ public class LoginController {
         return frameUserService.login(loginInfo, request);
     }
 
-    @PostMapping("/logout")
-    public Result logout(HttpServletRequest request) {
+    @GetMapping("/logout")
+    public Result logout( HttpServletRequest request) {
         return frameUserService.logout(request);
     }
 
