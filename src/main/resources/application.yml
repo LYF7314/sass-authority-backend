@@ -26,16 +26,16 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   jackson:
     default-property-inclusion: non_null
-  data:
-    redis:
-      host: 47.93.124.212
-      port: 6379
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: 100ms
+#  data:
+#    redis:
+#      host: 47.93.124.212
+#      port: 6379
+#      lettuce:
+#        pool:
+#          max-active: 8
+#          max-idle: 8
+#          min-idle: 0
+#          max-wait: 100ms
 mybatis-plus:
   type-aliases-package: edu.hitwh.entity # 别名扫描包
   configuration:

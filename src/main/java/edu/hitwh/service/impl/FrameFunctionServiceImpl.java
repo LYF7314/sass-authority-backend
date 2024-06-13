@@ -72,6 +72,7 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
     @Override
     public Result updateFunction(Function function) {
         Function targetFunction = frameFunctionMapper.selectById(function.getId());
+        targetFunction.setParentId(function.getParentId());
         targetFunction.setName(function.getName());
         targetFunction.setIsLeaf(function.getIsLeaf());
         targetFunction.setOrder(function.getOrder());

@@ -1,5 +1,4 @@
 package edu.hitwh.config;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,6 +17,7 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(redisSessionInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/*");  // 登录接口不拦截
+                .excludePathPatterns("/login")
+                .excludePathPatterns("/tenants");  // 登录接口不拦截
     }
 }
