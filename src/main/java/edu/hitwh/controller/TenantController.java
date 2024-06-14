@@ -93,7 +93,7 @@ public class TenantController {
     public Result tenantBusiness(Integer tenantId){
         if(tenantId == null)return Result.fail("请选择租户");
         if(frameTenantService.existsTenant(tenantId)){
-            return Result.ok(true);
+            return Result.ok(false);
         }else {
             return Result.fail("租户不存在");
         }

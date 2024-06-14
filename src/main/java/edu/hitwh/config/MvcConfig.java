@@ -17,7 +17,8 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(redisSessionInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login")
-                .excludePathPatterns("/tenants");  // 登录接口不拦截
+                .excludePathPatterns("/*");
+//                .excludePathPatterns("/login")
+//                .excludePathPatterns("/tenants");  // 登录接口不拦截
     }
 }
