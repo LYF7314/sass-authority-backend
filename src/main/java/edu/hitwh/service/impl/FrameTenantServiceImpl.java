@@ -221,7 +221,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         while (!newFunctions.isEmpty()){
             List<FunctionNode> childFunctions = new ArrayList<>();
             for (FunctionNode newFunction : newFunctions) {
-                newFunctionIds.add(newFunction.getId());
+                if(newFunctionIds.contains(newFunction.getId()))newFunctionIds.add(newFunction.getId());
                 if(newFunction.getChildren() != null){
                     childFunctions.addAll(newFunction.getChildren());
                 }
