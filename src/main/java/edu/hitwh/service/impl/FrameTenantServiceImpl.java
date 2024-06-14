@@ -122,9 +122,11 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
 
     public boolean isConflict(Tenant tenant){
         if(frameTenantMapper.exists(new LambdaQueryWrapper<Tenant>()
+                .ne(Tenant::getId,tenant.getId())
                 .eq(Tenant::getName,tenant.getName())
                 .or()
-                .eq(Tenant::getCode,tenant.getCode()))){
+                .eq(Tenant::getCode,tenant.getCode())
+                .ne(Tenant::getId,tenant.getId()))){
             return true;
         }else return false;
     }
@@ -138,7 +140,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
     @Override
     public boolean updateTenant(Tenant tenant) {
         if(isConflict(tenant))return false;
-        return false;
+        return updateById(tenant);
     }
 
     @Override

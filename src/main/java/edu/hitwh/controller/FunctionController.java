@@ -45,6 +45,7 @@ public class FunctionController {
      */
     @PutMapping("/update")
     public Result updateFunction(@RequestBody Function function) {
+        log.info("update function: {}",function);
         return frameFunctionService.updateFunction(function);
     }
 
