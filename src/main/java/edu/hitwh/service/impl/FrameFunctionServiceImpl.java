@@ -117,7 +117,7 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
 
     @Override
     public Result getNavigation(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute(LOGIN_INFO_KEY);
         Long userId = user.getId();
         List<FunctionNode> functionNodeList = userFunctionViewMapper.selectList(new LambdaQueryWrapper<UserFunctionView>()

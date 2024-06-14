@@ -1,5 +1,9 @@
 server:
   port: 8081
+  servlet:
+    session:
+      cookie:
+        path: /
 spring:
   redis:
     host: 47.93.124.212

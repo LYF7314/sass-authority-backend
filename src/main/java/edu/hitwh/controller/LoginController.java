@@ -61,7 +61,7 @@ public class LoginController {
 
     @GetMapping("/userinfo")
     public Result getUserInfo(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(LOGIN_INFO_KEY) == null) {
             return Result.unLogin("Session not exist");
         }
@@ -70,7 +70,7 @@ public class LoginController {
 
     @GetMapping("/navigation")
     public Result getNavigation(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(LOGIN_INFO_KEY) == null) {
             return Result.unLogin("Session not exist");
         }

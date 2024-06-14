@@ -56,7 +56,6 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
                 .eq(User::getUserName, loginInfo.getUserName())
                 .eq(User::getPassword, loginInfo.getPassword()));
         return user;
-
 //        HttpSession session = request.getSession();
 //        session.setAttribute(LOGIN_INFO_KEY, user);
     }
@@ -68,7 +67,7 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
             session.invalidate(); // 使当前会话无效
             return Result.ok("logout successfully");
         } else {
-            return Result.unLogin("No active session found");
+            return Result.ok("No active session found");
         }
     }
 
