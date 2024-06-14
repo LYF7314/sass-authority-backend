@@ -221,7 +221,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         while (!newFunctions.isEmpty()){
             List<FunctionNode> childFunctions = new ArrayList<>();
             for (FunctionNode newFunction : newFunctions) {
-                if(newFunctionIds.contains(newFunction.getId()))newFunctionIds.add(newFunction.getId());
+                if(!newFunctionIds.contains(newFunction.getId()))newFunctionIds.add(newFunction.getId());
                 if(newFunction.getChildren() != null){
                     childFunctions.addAll(newFunction.getChildren());
                 }
@@ -240,6 +240,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         for (Long functionId : functionIds) {
             frameTenantfunctionMapper.delete(new LambdaQueryWrapper<TenantFunction>().eq(TenantFunction::getTenantId,tenantFunctionDTO.getTenantId()).eq(TenantFunction::getFunctionId,functionId));
         }
+        completeTenantFunction(tenantFunctionDTO.getTenantId());
         return true;
     }
 }
