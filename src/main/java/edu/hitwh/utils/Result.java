@@ -1,5 +1,6 @@
 package edu.hitwh.utils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class Result {
     private int code;
     private String msg;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private Object data;
     public static final int OK = 0;
     public static final int FAIL = 1;

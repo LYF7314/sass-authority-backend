@@ -51,7 +51,7 @@ public class TenantController {
     @GetMapping("/all")
     public Result getAllTenants(HttpSession session) {
         User user = (User)(session.getAttribute(RedisConstants.LOGIN_INFO_KEY));
-        log.info("get all tenants session: {}",user.getId());
+        log.info("get all tenants-session: {}",user.getId());
         List<Tenant> tenants = frameTenantService.list();
         return tenants == null?Result.fail("获取租户失败"):Result.ok(tenants);
     }

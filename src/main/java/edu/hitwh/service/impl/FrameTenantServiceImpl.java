@@ -75,6 +75,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
     //TODO: Implement the initialize method
     @Override
     public boolean initialize(TenantAdminDTO tenantAdminDTO) {
+        log.debug("initialize tenant: {}"+tenantAdminDTO.toString());
         //create role
         Role role = new Role();
         role.setName(tenantAdminDTO.getRoleName());
@@ -154,6 +155,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
                 .stream()
                 .map(TenantFunction::getFunctionId)
                 .toList();
+        if(functionIds.isEmpty())return new ArrayList<>();
         List<Function> functions = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>().in(Function::getId, functionIds).select(Function::getId, Function::getName, Function::getParentId,  Function::getIsLeaf, Function::getOrder));
         Map<Long,FunctionNode> functionMap = new HashMap<>();
         for (Function function : functions) {
