@@ -22,13 +22,13 @@ import lombok.Setter;
 public class UserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    //用户-功能关系id
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    // 用户id
     @TableField("userId")
     private Long userId;
-
+    // 角色id
     @TableField("roleId")
     private Long roleId;
 }

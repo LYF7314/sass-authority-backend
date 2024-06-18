@@ -37,6 +37,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(@RequestBody LoginDTO loginInfo,HttpServletRequest request) {
+        log.info("login: {}",loginInfo.toString());
         User user = request.getSession(false)!=null?(User)(request.getSession(false).getAttribute(RedisConstants.LOGIN_INFO_KEY)):null;
         if(user != null) log.info("login session: {}",user.getId());
         request.getSession().invalidate();

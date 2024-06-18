@@ -22,20 +22,21 @@ import lombok.Setter;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    // 用户id
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    // 账号
     private String account;
-
+    // 密码
     private String password;
-
+    // 用户名
     @TableField("userName")
     private String userName;
+    // 租户id
     @TableField("tenantId")
     private Long tenantId;
-
+    // 邮箱
     private String email;
-
+    // 电话
     private String telephone;
 }

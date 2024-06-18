@@ -23,18 +23,18 @@ import lombok.*;
 public class TenantFunction implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    //租户-功能关系id
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    //功能名称
     private String name;
-
+    //租户id
     @TableField("tenantId")
     private Long tenantId;
-
+    //功能id
     @TableField("functionId")
     private Long functionId;
-
+    //排序
     private Integer order;
 
     public TenantFunction(Long tenantId,Long functionId) {

@@ -35,6 +35,7 @@ public class TenantController {
      */
     @PostMapping("/add")
     public Result addTenant(@RequestBody Tenant tenant) {
+        log.info("add tenant: {}",tenant.toString());
         tenant.setId(null);
         if(tenant.getCode() == null  ||
         tenant.getName() == null || tenant.getName().isBlank() ||
@@ -50,6 +51,7 @@ public class TenantController {
      */
     @GetMapping("/all")
     public Result getAllTenants(HttpSession session) {
+        log.info("get all tenants");
         User user = (User)(session.getAttribute(RedisConstants.LOGIN_INFO_KEY));
         log.info("get all tenants-session: {}",user.getId());
         List<Tenant> tenants = frameTenantService.list();
@@ -63,6 +65,7 @@ public class TenantController {
      */
     @GetMapping("/search")
     public Result searchTenant(SearchTenantDTO search){
+        log.info("search tenant: {}",search.toString());
         if(search.getName() == null || search.getName().isBlank())return Result.fail("请输入租户名");
         List<Tenant> tenants = frameTenantService.searchTenant(search.getName(),search.getState());
         return tenants == null?Result.fail("无法搜索到符合条件的租户"):Result.ok(tenants);
@@ -75,6 +78,7 @@ public class TenantController {
      */
     @PutMapping("/update")
     public Result updateTenant(@RequestBody Tenant tenant){
+        log.info("update tenant: {}",tenant.toString());
         if(tenant.getId() == null){
             return Result.fail("请选择租户");
         }
@@ -91,6 +95,7 @@ public class TenantController {
 
     @GetMapping("/business")
     public Result tenantBusiness(Integer tenantId){
+        log.info("get tenant business: {}",tenantId);
         if(tenantId == null)return Result.fail("请选择租户");
         if(frameTenantService.existsTenant(tenantId)){
             return Result.ok(false);
@@ -107,6 +112,7 @@ public class TenantController {
      */
     @DeleteMapping("/delete")
     public Result deleteTenant(Integer tenantId){
+        log.info("delete tenant: {}",tenantId);
         if (tenantId == null)return Result.fail("请选择租户");
         return frameTenantService.removeById(tenantId)?Result.ok():Result.fail("删除失败");
     }
@@ -118,6 +124,7 @@ public class TenantController {
      */
     @PostMapping("/initialize")
     public Result initializeTenant(@RequestBody TenantAdminDTO tenant){
+        log.info("initialize tenant: {}",tenant.toString());
         if(tenant.getId() == null)return Result.fail("请选择租户");
         if(tenant.getRoleName() == null || tenant.getRoleName().isBlank() || tenant.getUserName() == null || tenant.getUserName().isBlank() || tenant.getAccount() == null || tenant.getAccount().isBlank()){
             return Result.fail("请填写完整信息");
@@ -137,6 +144,7 @@ public class TenantController {
      */
     @GetMapping("/functions")
     public Result getTenantFunctions(Long tenantId){
+        log.info("get tenant functions: {}",tenantId);
         if(tenantId == null)return Result.fail("请选择租户");
         List<FunctionNode> functions = frameTenantService.getTenantFunctions(tenantId);
         return functions == null?Result.fail("查找该租户功能失败"):Result.ok(functions);
@@ -149,6 +157,7 @@ public class TenantController {
      */
     @PostMapping("/function/distribute")
     public Result distributeFunction(@RequestBody TenantFunctionDTO tenantFunctionDTO){
+        log.info("distribute function: {}",tenantFunctionDTO.toString());
         if(tenantFunctionDTO.getTenantId()==null)return Result.fail("请选择租户");
         return frameTenantService.distributeFunction(tenantFunctionDTO)?Result.ok():Result.fail("分配失败");
     }

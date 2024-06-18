@@ -22,15 +22,15 @@ import lombok.Setter;
 public class RoleFunction implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    // 角色-功能关系id
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    // 角色id
     @TableField("roleId")
     private Long roleId;
-
+    // 功能id
     @TableField("tenantFunctionId")
     private Long tenantFunctionId;
-
+    // 排序
     private Integer order;
 }

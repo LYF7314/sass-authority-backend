@@ -25,6 +25,7 @@ public class FunctionController {
      */
     @PostMapping("/add")
     public Result createFunction(@RequestBody Function function) {
+        log.info("create function: {}",function);
         return frameFunctionService.createFunction(function);
     }
 
@@ -56,6 +57,7 @@ public class FunctionController {
      */
     @DeleteMapping("/delete/{id}")
     public Result deleteFunction(@PathVariable Long id) {
+        log.info("delete function: {}",id);
         return frameFunctionService.deleteFunction(id);
     }
 }

@@ -1,5 +1,8 @@
 package edu.hitwh.dto;
 
+import lombok.ToString;
+
+@ToString
 public class SearchTenantDTO {
     private String name;
     private Integer state;

@@ -33,25 +33,25 @@ public class Function implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
+    // 功能id
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    // 功能名称
     private String name;
-
+    // 功能描述
     private Integer state;
-
+    // 父功能id
     @TableField("parentId")
     private Long parentId;
-
+    // 是否叶子节点
     @TableField("isLeaf")
     private Boolean isLeaf;
-
+    // 功能顺序
     @TableField("`order`")
     private Integer order;
-
+    // 功能url
     private String url;
-
+    // 服务id
     @TableField("serviceId")
     private Long serviceId;
 

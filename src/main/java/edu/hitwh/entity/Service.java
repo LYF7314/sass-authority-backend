@@ -22,18 +22,18 @@ import lombok.Setter;
 public class Service implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    // 服务id
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
+    // 服务名称
     private String name;
-
+    // 组件id
     @TableField("componentId")
     private Long componentId;
-
+    // 开发者
     private String developer;
-
+    // 服务url
     private String url;
-
+    // 服务描述
     private String description;
 }
