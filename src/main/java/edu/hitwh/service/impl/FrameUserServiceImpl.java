@@ -56,7 +56,7 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
                 .eq(User::getUserName, loginInfo.getUserName())
                 .eq(User::getPassword, loginInfo.getPassword()));
         return user;
-//        HttpSession session = request.getSession();
+//        HttpSession session = request.getSession(false);
 //        session.setAttribute(LOGIN_INFO_KEY, user);
     }
 
