@@ -64,7 +64,7 @@ public class LoginController {
     public Result getUserInfo(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(LOGIN_INFO_KEY) == null) {
-            return Result.ok("Session not exist");
+            return Result.fail("登录信息过期 请重新登录");
         }
         return frameUserService.getUserInfo(request);
     }
@@ -73,7 +73,7 @@ public class LoginController {
     public Result getNavigation(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(LOGIN_INFO_KEY) == null) {
-            return Result.ok("Session not exist");
+            return Result.fail("登录信息过期 请重新登录");
         }
         return frameFunctionService.getNavigation(request);
     }

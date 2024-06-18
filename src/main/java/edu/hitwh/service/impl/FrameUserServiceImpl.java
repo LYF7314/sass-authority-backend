@@ -56,8 +56,6 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
                 .eq(User::getUserName, loginInfo.getUserName())
                 .eq(User::getPassword, loginInfo.getPassword()));
         return user;
-//        HttpSession session = request.getSession(false);
-//        session.setAttribute(LOGIN_INFO_KEY, user);
     }
 
     @Override
@@ -74,9 +72,6 @@ public class FrameUserServiceImpl extends ServiceImpl<FrameUserMapper, User> imp
     @Override
     public Result getUserInfo(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return Result.unLogin("No active session found");
-        }
         List<String> userRoleNameList = new ArrayList<>();
         UserInfoDTO userInfoDTO = new UserInfoDTO();
         User user = (User)session.getAttribute(LOGIN_INFO_KEY);
