@@ -186,6 +186,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
                 .stream()
                 .map(TenantFunction::getFunctionId)
                 .toList();
+        if(functionIds.isEmpty())return;
         List<Function> functionList = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>().in(Function::getId, functionIds).select(Function::getId, Function::getParentId));
         Map< Long,Function> functions = new HashMap<>();
         for (Function function : functionList) {
