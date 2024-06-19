@@ -64,7 +64,9 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
     @Override
     public List<Tenant> searchTenant(String name, Integer state) {
         LambdaQueryWrapper<Tenant> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(Tenant::getName,name);
+        if(name != null && !name.isBlank()){
+            wrapper.like(Tenant::getName,name);
+        }
         if(state != null){
             wrapper.eq(Tenant::getState,state);
         }
@@ -79,7 +81,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         //create role
         Role role = new Role();
         role.setName(tenantAdminDTO.getRoleName());
-        role.setTenantId(tenantAdminDTO.getId());
+        role.setTenantId(tenantAdminDTO.getTenantId());
         if(frameRoleMapper.exists(new LambdaQueryWrapper<Role>().eq(Role::getName,role.getName())))throw new RuntimeException("Role already exists");
         if(frameRoleMapper.insert(role)!=1)return false;
 
@@ -88,7 +90,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         user.setAccount(tenantAdminDTO.getAccount());
         user.setUserName(tenantAdminDTO.getUserName());
         user.setPassword(tenantAdminDTO.getAccount());
-        user.setTenantId(tenantAdminDTO.getId());
+        user.setTenantId(tenantAdminDTO.getTenantId());
         if(frameUserMapper.exists(new LambdaQueryWrapper<User>().eq(User::getAccount,tenantAdminDTO.getAccount())))throw new RuntimeException("Account already exists");
         if(frameUserMapper.insert(user)!=1)throw new RuntimeException("Failed to create user");
 
@@ -99,7 +101,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         if(frameUserRoleMapper.insert(userRole)!=1)throw new RuntimeException("Failed to bind user and role");
 
         //bind role, user and functions
-        List<Long> functionIds = frameTenantfunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>().eq(TenantFunction::getTenantId, tenantAdminDTO.getId()).select(TenantFunction::getId))
+        List<Long> functionIds = frameTenantfunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>().eq(TenantFunction::getTenantId, tenantAdminDTO.getTenantId()).select(TenantFunction::getId))
                 .stream()
                 .map(TenantFunction::getId)
                 .toList();
@@ -113,7 +115,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
 
         //update tenant
         Tenant tenant = new Tenant();
-        tenant.setId(tenantAdminDTO.getId());
+        tenant.setId(tenantAdminDTO.getTenantId());
         tenant.setRoleName(tenantAdminDTO.getRoleName());
         tenant.setAccount(tenantAdminDTO.getAccount());
         tenant.setUserName(tenantAdminDTO.getUserName());
@@ -151,18 +153,26 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
 
     @Override
     public List<FunctionNode> getTenantFunctions(Long tenantId) {
+        //获取租户拥有的功能id
         List<Long> functionIds = frameTenantfunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>().eq(TenantFunction::getTenantId, tenantId).select(TenantFunction::getFunctionId))
                 .stream()
                 .map(TenantFunction::getFunctionId)
                 .toList();
         if(functionIds.isEmpty())return new ArrayList<>();
-        List<Function> functions = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>().in(Function::getId, functionIds).select(Function::getId, Function::getName, Function::getParentId,  Function::getIsLeaf, Function::getOrder));
+
+        //获取功能列表
+        List<Function> functions = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>()
+                .in(Function::getId, functionIds)
+                .select(Function::getId, Function::getName, Function::getParentId,  Function::getIsLeaf, Function::getOrder));
+        //建立功能id和功能的映射，方便查找父节点
         Map<Long,FunctionNode> functionMap = new HashMap<>();
         for (Function function : functions) {
             functionMap.put(function.getId(),new FunctionNode(function));
         }
+        //建立功能树
         List<FunctionNode> finalFunctions = new ArrayList<>();
         for (Function function : functions) {
+            //如果有父节点，将子节点加入父节点的children，否则加入功能树顶层finalFunctions。如果父节点不存在，补全租户功能
             if(function.getParentId() != null){
                 FunctionNode parent = functionMap.get(function.getParentId());
                 if(parent == null){
@@ -174,26 +184,36 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
                 finalFunctions.add(functionMap.get(function.getId()));
             }
         }
-        //log.error(functionMap.toString());
+        //返回根节点下的子功能树，如果没有根节点，返回空列表
         if(finalFunctions.get(0) == null)return new ArrayList<>();
         return finalFunctions.get(0).getChildren();
     }
 
 
-
+    /**
+     * 补全租户功能,租户拥有子功能，将父节点加入补全功能数
+     * @param tenantId
+     */
     public void completeTenantFunction(Long tenantId){
+        //获取租户拥有的功能id
         List<Long> functionIds = frameTenantfunctionMapper.selectList(new LambdaQueryWrapper<TenantFunction>().eq(TenantFunction::getTenantId, tenantId).select(TenantFunction::getFunctionId))
                 .stream()
                 .map(TenantFunction::getFunctionId)
                 .toList();
         if(functionIds.isEmpty())return;
-        List<Function> functionList = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>().in(Function::getId, functionIds).select(Function::getId, Function::getParentId));
+        //获取功能列表
+        List<Function> functionList = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>()
+                .in(Function::getId, functionIds)
+                .select(Function::getId, Function::getParentId));
+        //建立功能id和功能的映射，方便查找父节点
         Map< Long,Function> functions = new HashMap<>();
         for (Function function : functionList) {
             functions.put(function.getId(),function);
         }
+        //缺失的父节点列表
         List<Long> missingParentIds = new ArrayList<>();
         log.error(functionIds.toString());
+        //循环将列表中的子节点的父节点加入新的功能列表，循环结束后替换原有列表进入下一次循环
         while(!functionList.isEmpty()) {
             List<Function> parentFunctions = new ArrayList<>();
             for (Function function : functionList) {
@@ -207,6 +227,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
             }
             functionList = parentFunctions;
         }
+        //将缺失的父节点加入租户功能
         for (Long missingParentId : missingParentIds) {
             frameTenantfunctionMapper.insert(new TenantFunction(tenantId,missingParentId));
         }
@@ -243,7 +264,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         for (Long functionId : functionIds) {
             frameTenantfunctionMapper.delete(new LambdaQueryWrapper<TenantFunction>().eq(TenantFunction::getTenantId,tenantFunctionDTO.getTenantId()).eq(TenantFunction::getFunctionId,functionId));
         }
-        completeTenantFunction(tenantFunctionDTO.getTenantId());
+        //completeTenantFunction(tenantFunctionDTO.getTenantId());
         return true;
     }
 }

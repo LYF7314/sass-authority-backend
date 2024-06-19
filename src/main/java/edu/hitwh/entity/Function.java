@@ -51,7 +51,7 @@ public class Function implements Serializable {
     private Integer order;
     // 功能url
     private String url;
-    // 服务id
+    // 服务id、、
     @TableField("serviceId")
     private Long serviceId;
 

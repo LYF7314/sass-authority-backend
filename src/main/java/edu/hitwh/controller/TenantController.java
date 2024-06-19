@@ -1,7 +1,6 @@
 package edu.hitwh.controller;
 
 import edu.hitwh.dto.*;
-import edu.hitwh.entity.Function;
 import edu.hitwh.entity.Tenant;
 import edu.hitwh.entity.User;
 import edu.hitwh.service.IFrameTenantService;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -66,7 +64,6 @@ public class TenantController {
     @GetMapping("/search")
     public Result searchTenant(SearchTenantDTO search){
         log.info("search tenant: {}",search.toString());
-        if(search.getName() == null || search.getName().isBlank())return Result.fail("请输入租户名");
         List<Tenant> tenants = frameTenantService.searchTenant(search.getName(),search.getState());
         return tenants == null?Result.fail("无法搜索到符合条件的租户"):Result.ok(tenants);
     }
@@ -125,7 +122,7 @@ public class TenantController {
     @PostMapping("/initialize")
     public Result initializeTenant(@RequestBody TenantAdminDTO tenant){
         log.info("initialize tenant: {}",tenant.toString());
-        if(tenant.getId() == null)return Result.fail("请选择租户");
+        if(tenant.getTenantId() == null)return Result.fail("请选择租户");
         if(tenant.getRoleName() == null || tenant.getRoleName().isBlank() || tenant.getUserName() == null || tenant.getUserName().isBlank() || tenant.getAccount() == null || tenant.getAccount().isBlank()){
             return Result.fail("请填写完整信息");
         }

@@ -27,6 +27,7 @@ public class RedisSessionInterceptor implements HandlerInterceptor {
             return true;
         }
         log.info(session == null ? "session is null" : "session is not null");
+        log.info("request ip: {}",request.getRemoteAddr());
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write("{\"code\":2,\"msg\":\"用户未登录\"}");
         return false;
