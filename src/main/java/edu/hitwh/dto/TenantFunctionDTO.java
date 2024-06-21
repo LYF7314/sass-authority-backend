@@ -16,6 +16,5 @@ public class TenantFunctionDTO {
     // 租户 ID
     Long tenantId;
     // 租户名称
-    FunctionNode[] functions;
-
+    List<Long> functionIds;
 }

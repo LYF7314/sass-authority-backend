@@ -239,13 +239,16 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
                 .stream()
                 .map(TenantFunction::getFunctionId)
                 .toList());
-        List<Long> newFunctionIds = new ArrayList<>();
-        List<FunctionNode> newFunctions = Arrays.asList(tenantFunctionDTO.getFunctions());
+        Set<Long> newFunctionIds = new HashSet<>(tenantFunctionDTO.getFunctionIds());
+        List<FunctionNode> newFunctions = frameFunctionMapper.selectList(new LambdaQueryWrapper<Function>().in(Function::getId, tenantFunctionDTO.getFunctionIds()).select(Function::getId, Function::getParentId))
+                .stream()
+                .map(FunctionNode::new)
+                .toList();
         newFunctionIds.add(Long.reverse(0L));
         while (!newFunctions.isEmpty()){
             List<FunctionNode> childFunctions = new ArrayList<>();
             for (FunctionNode newFunction : newFunctions) {
-                if(!newFunctionIds.contains(newFunction.getId()))newFunctionIds.add(newFunction.getId());
+                newFunctionIds.add(newFunction.getId());
                 if(newFunction.getChildren() != null){
                     childFunctions.addAll(newFunction.getChildren());
                 }

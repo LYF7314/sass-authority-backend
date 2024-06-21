@@ -156,6 +156,7 @@ public class TenantController {
     public Result distributeFunction(@RequestBody TenantFunctionDTO tenantFunctionDTO){
         log.info("distribute function: {}",tenantFunctionDTO.toString());
         if(tenantFunctionDTO.getTenantId()==null)return Result.fail("请选择租户");
+        if(tenantFunctionDTO.getFunctionIds()==null )return Result.fail("功能列表不能为空");
         return frameTenantService.distributeFunction(tenantFunctionDTO)?Result.ok():Result.fail("分配失败");
     }
 }
