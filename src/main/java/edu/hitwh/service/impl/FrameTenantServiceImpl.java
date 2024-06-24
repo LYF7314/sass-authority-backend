@@ -82,7 +82,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         Role role = new Role();
         role.setName(tenantAdminDTO.getRoleName());
         role.setTenantId(tenantAdminDTO.getTenantId());
-        if(frameRoleMapper.exists(new LambdaQueryWrapper<Role>().eq(Role::getName,role.getName())))throw new RuntimeException("Role already exists");
+        if(frameRoleMapper.exists(new LambdaQueryWrapper<Role>().eq(Role::getName,role.getName()).eq(Role::getTenantId,tenantAdminDTO.getTenantId())))throw new RuntimeException("Role already exists");
         if(frameRoleMapper.insert(role)!=1)return false;
 
         //create user
@@ -91,7 +91,7 @@ public class FrameTenantServiceImpl extends ServiceImpl<FrameTenantMapper, Tenan
         user.setUserName(tenantAdminDTO.getUserName());
         user.setPassword(tenantAdminDTO.getAccount());
         user.setTenantId(tenantAdminDTO.getTenantId());
-        if(frameUserMapper.exists(new LambdaQueryWrapper<User>().eq(User::getAccount,tenantAdminDTO.getAccount())))throw new RuntimeException("Account already exists");
+        if(frameUserMapper.exists(new LambdaQueryWrapper<User>().eq(User::getAccount,tenantAdminDTO.getAccount()).eq(User::getTenantId,tenantAdminDTO.getTenantId())))throw new RuntimeException("Account already exists");
         if(frameUserMapper.insert(user)!=1)throw new RuntimeException("Failed to create user");
 
         //bind user and role
