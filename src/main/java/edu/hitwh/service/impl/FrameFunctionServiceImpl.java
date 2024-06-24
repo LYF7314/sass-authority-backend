@@ -43,6 +43,9 @@ public class FrameFunctionServiceImpl extends ServiceImpl<FrameFunctionMapper, F
     @Override
     public Result createFunction(Function function) {
         function.setState(Function.STATE_AVAILABLE);
+        if (function.getOrder() == null) {
+            function.setOrder(1);
+        }
         frameFunctionMapper.insert(function);
         return Result.okWithMessage("Inserted function successfully");
     }

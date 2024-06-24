@@ -1,6 +1,4 @@
 package edu.hitwh.controller;
-
-import edu.hitwh.config.RedisSessionInterceptor;
 import edu.hitwh.entity.Function;
 import edu.hitwh.service.IFrameFunctionService;
 import edu.hitwh.utils.RedisConstants;
